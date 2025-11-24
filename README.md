@@ -1,3 +1,14 @@
+---
+title: nanobanana-editor
+emoji: 🤖
+colorFrom: indigo
+colorTo: blue
+sdk: gradio
+app_file: app.py
+pinned: false
+---
+
+
 # nanobanana-editor
 
 Google Gen AI SDK for Python を使用した画像生成ツール
