@@ -13,12 +13,12 @@ jobs:
       - name: Checkout public repo (full clone required)
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # shallow clone エラー対策（必須）
+          fetch-depth: 0   # shallow clone error 対策
 
-      - name: Remove folders that HuggingFace Spaces cannot accept
+      - name: Remove binary folders for HF (samples/)
         run: |
-          # HF は JPG/PNG など大きいバイナリを push すると拒否する
-          rm -rf samples/ || true    # GH public には残るが、HF push 時だけ除外
+          rm -rf samples/ || true
+          git rm -r --cached samples/ || true
 
       - name: Install git-lfs
         run: |
@@ -31,12 +31,19 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
+      - name: Commit removal of samples
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Remove samples/ for HF sync"
+          fi
+
       - name: Push to HuggingFace Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # HuggingFace Space (正しいスペース名)
           git remote add hf https://user:$HF_TOKEN@huggingface.co/spaces/catnipglitch/nanobabana-editor
 
-          # HF Space は merge を要求しないので force push が正しい
           git push hf main --force
