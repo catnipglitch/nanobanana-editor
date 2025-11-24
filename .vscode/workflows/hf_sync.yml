@@ -1,0 +1,42 @@
+name: Sync Public Repo to HuggingFace Space
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  sync-to-hf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout public repo (full clone required)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # shallow clone エラー対策（必須）
+
+      - name: Remove folders that HuggingFace Spaces cannot accept
+        run: |
+          # HF は JPG/PNG など大きいバイナリを push すると拒否する
+          rm -rf samples/ || true    # GH public には残るが、HF push 時だけ除外
+
+      - name: Install git-lfs
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y git-lfs
+          git lfs install
+
+      - name: Configure git user for HF
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Push to HuggingFace Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          # HuggingFace Space (正しいスペース名)
+          git remote add hf https://user:$HF_TOKEN@huggingface.co/spaces/catnipglitch/nanobabana-editor
+
+          # HF Space は merge を要求しないので force push が正しい
+          git push hf main --force
