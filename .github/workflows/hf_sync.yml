@@ -1,0 +1,31 @@
+name: Sync to HuggingFace Space
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  sync-to-hf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout public repository
+        uses: actions/checkout@v4
+
+      - name: Install git-lfs
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git-lfs
+          git lfs install
+
+      - name: Configure git for HF
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Push to HuggingFace
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf https://huggingface.co/spaces/catnipglitch/nanobanana-editor
+          git push https://user:$HF_TOKEN@huggingface.co/spaces/catnipglitch/nanobanana-editor main --force
