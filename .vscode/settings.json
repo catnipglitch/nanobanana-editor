@@ -1,5 +1,6 @@
 {
     "github-actions.workflows.pinned.workflows": [
-        ".github/workflows/sync_public.yml"
+        ".github/workflows/sync_public.yml",
+        ".github/workflows/hf_sync.yml"
     ]
 }

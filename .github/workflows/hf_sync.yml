@@ -1,6 +1,7 @@
 name: Sync to HuggingFace Space
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "main" ]
 
@@ -11,6 +12,8 @@ jobs:
     steps:
       - name: Checkout public repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # ← 重要！（必須）
 
       - name: Install git-lfs
         run: |
@@ -27,5 +30,5 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git remote add hf https://huggingface.co/spaces/catnipglitch/nanobanana-editor
-          git push https://user:$HF_TOKEN@huggingface.co/spaces/catnipglitch/nanobanana-editor main --force
+          git remote add hf https://user:$HF_TOKEN@huggingface.co/spaces/catnipglitch/nanobanana-editor
+          git push hf main --force
