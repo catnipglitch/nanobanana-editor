@@ -1,0 +1,60 @@
+# アプリケーション設定ファイル
+# nanobabana-editor の全体設定とプロンプトテンプレート
+
+# UI設定
+[ui]
+# 起動時の初期タブ
+# 利用可能な値: gemini, imagen, reference, agent, settings
+# 注意: APIキー未設定時は自動的に settings が選択されます
+default_tab = "gemini"
+
+# プロンプトテンプレート
+# nanobabana-editor で使用するサンプルプロンプト集
+# Note: modelフィールドは削除されました（Phase 2.5: Gemini/Imagen完全分離）
+[[templates]]
+name = "人物-ファストファッション男性-全身"
+prompt = "Full-body portrait of a male model for modern fast fashion, natural pose, clean background, realistic photography, neutral styling, random skin tone and hair color but not eccentric, high detail, contemporary casual outfit"
+
+[[templates]]
+name = "人物-ファストファッション女性-全身"
+prompt = "Full-body portrait of a female model for modern fast fashion, natural pose, clean background, realistic photography, neutral styling, random skin tone and hair color but not eccentric, high detail, contemporary casual outfit"
+
+[[templates]]
+name = "人物-モダン雑誌男性-全身"
+prompt = "Full-body portrait of a male model for modern magazine cover, striking pose, expressive posture, stylish props such as chair or stool, high-end editorial look, realistic photography, random but natural skin tone and hair color"
+
+[[templates]]
+name = "人物-モダン雑誌女性-全身"
+prompt = "Full-body portrait of a female model for modern magazine cover, striking pose, expressive posture, stylish props such as chair or stool, high-end editorial look, realistic photography, random but natural skin tone and hair color"
+
+[[templates]]
+name = "アニメ-高校生男子-設定資料"
+prompt = "Full-body character reference illustration of a Japanese high school boy, anime style, clean turnaround-friendly pose, simple shading, random hairstyle and hair color, school uniform, clear lineart"
+
+[[templates]]
+name = "アニメ-高校生女子-設定資料"
+prompt = "Full-body character reference illustration of a Japanese high school girl, anime style, clean turnaround-friendly pose, simple shading, random hairstyle and hair color, school uniform, clear lineart"
+
+[[templates]]
+name = "ゲーム-異世界転生-男性-設定資料"
+prompt = "Full-body character reference illustration of a male character from an isekai fantasy world, toon-shaded anime style, casual fantasy outfit, no weapons or items in hands, random skin tone and hair color, clean design"
+
+[[templates]]
+name = "ゲーム-異世界転生-女性-設定資料"
+prompt = "Full-body character reference illustration of a female character from an isekai fantasy world, toon-shaded anime style, casual fantasy outfit, no weapons or items in hands, random skin tone and hair color, clean design"
+
+[[templates]]
+name = "スマホゲーム-メカ女性キャラ-設定資料"
+prompt = "Full-body character reference illustration of a mechanical female character for a Japanese mobile game, stylish and visually appealing design, lightly sexy but low exposure, mechanical parts integrated into the silhouette, polished illustration style"
+
+[[templates]]
+name = "アニメ-女子高生アイドル-立ち絵-統一スタイル"
+prompt = """
+Full-body character reference illustration of a Japanese high-school idol girl.
+Front-facing, natural relaxed standing pose, neutral expression, clean character-setting style.
+Consistent school uniform: white short-sleeve blouse, navy ribbon tie, pleated navy skirt, navy knee socks, black loafers.
+Uniform must always match this design.
+Hair style and hair color are fully random.
+Art style: modern Japanese anime with clean lineart, soft cell shading, balanced colors, similar to contemporary high-quality TV anime character sheets.
+Background plain white, no props, designed for character material production.
+"""

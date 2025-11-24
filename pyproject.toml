@@ -1,0 +1,16 @@
+[project]
+name = "nanobabana-editor-internal"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "google-cloud-aiplatform>=1.127.0",
+    "google-genai>=1.50.1",
+    "google-generativeai>=0.8.5",
+    "gradio>=5.49.1",
+    "onnxruntime>=1.23.2",
+    "pillow>=11.0.0",
+    "python-dotenv>=1.0.0",
+    "rembg>=2.0.68",
+]
