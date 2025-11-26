@@ -63,6 +63,14 @@ class GeminiTab(BaseTab):
 
                         gr.Markdown("**注意**: Geminiは1枚のみ生成します")
 
+                    # ツールオプション（Phase 3.0）
+                    with gr.Accordion("ツールオプション", open=False):
+                        gemini_google_search = gr.Checkbox(
+                            label="Google Search",
+                            value=False,
+                            info="Google検索でリアルタイム情報を取得（Gemini 3 Pro Image推奨）"
+                        )
+
                     # ボタン
                     with gr.Row():
                         gemini_gen_button = gr.Button("画像を生成", variant="primary")
@@ -90,6 +98,7 @@ class GeminiTab(BaseTab):
                     gemini_model,
                     gemini_aspect_ratio,
                     gemini_image_size,
+                    gemini_google_search,  # Phase 3.0
                 ],
                 outputs=[
                     gemini_output_image,
@@ -99,9 +108,9 @@ class GeminiTab(BaseTab):
             )
 
             gemini_reset_button.click(
-                fn=lambda: ("", self.app.default_aspect_ratio, "1K"),
+                fn=lambda: ("", self.app.default_aspect_ratio, "1K", False),
                 inputs=[],
-                outputs=[gemini_prompt, gemini_aspect_ratio, gemini_image_size]
+                outputs=[gemini_prompt, gemini_aspect_ratio, gemini_image_size, gemini_google_search]
             )
 
     def generate_gemini_image(
@@ -110,6 +119,7 @@ class GeminiTab(BaseTab):
         model_name: str,
         aspect_ratio: str,
         image_size: str,
+        enable_google_search: bool,  # Phase 3.0
     ):
         """
         Geminiで画像を生成（Tab 1: Gemini専用）
@@ -118,6 +128,7 @@ class GeminiTab(BaseTab):
             (image, info_text, json_log): 生成された画像、情報テキスト、JSONログ
         """
         logger.info(f"=== Gemini Tab: Image Generation Request ===")
+        logger.info(f"Google Search: {enable_google_search}")
 
         if self.app.test_mode:
             return None, "⚠ テストモード: 画像生成機能は無効です", ""
@@ -137,7 +148,7 @@ class GeminiTab(BaseTab):
             return None, error_text, ""
 
         try:
-            # Gemini固有の設定
+            # Gemini固有の設定（Phase 3.0: enable_google_search追加）
             config = GenerationConfig(
                 model_type=ModelType.TEST if model_name == "test-model" else ModelType.GEMINI,
                 model_name=model_name,
@@ -145,6 +156,7 @@ class GeminiTab(BaseTab):
                 aspect_ratio=aspect_ratio,
                 number_of_images=1,  # Geminiは常に1枚
                 image_size=image_size,
+                enable_google_search=enable_google_search,  # Phase 3.0
             )
 
             # ジェネレータを選択
@@ -159,8 +171,8 @@ class GeminiTab(BaseTab):
             # PIL Imageに変換
             pil_image = Image.open(io.BytesIO(image_data_list[0]))
 
-            # ファイル保存
-            image_path, metadata_path = self.app.output_manager.save_image_with_metadata(
+            # ファイル保存（HF Spacesでは無効化される可能性あり）
+            save_result = self.app.output_manager.save_image_with_metadata(
                 image_data=image_data_list[0],
                 metadata=metadata,
                 prefix="gemini_gen",
@@ -170,8 +182,12 @@ class GeminiTab(BaseTab):
             # 情報テキスト生成
             info_text = f"### 生成完了 ✅\n\n"
             info_text += f"**モデル**: {model_name}\n"
-            info_text += f"**画像ファイル**: `{image_path.name}`\n"
-            info_text += f"**メタデータ**: `{metadata_path.name}`\n"
+            if save_result:
+                image_path, metadata_path = save_result
+                info_text += f"**画像ファイル**: `{image_path.name}`\n"
+                info_text += f"**メタデータ**: `{metadata_path.name}`\n"
+            else:
+                info_text += f"**画像ファイル**: （保存無効）\n"
             info_text += f"**ファイルサイズ**: {len(image_data_list[0]) / 1024:.1f} KB\n"
 
             # JSONログ

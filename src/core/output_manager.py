@@ -5,25 +5,46 @@ Output Manager
 - yyyymmddhhmmss + ユニークナンバーのファイル名生成
 - 画像とプロンプト・パラメータのJSON保存
 - 出力ファイルの重複防止
+- Hugging Face Spaces環境での自動ファイル保存無効化
 """
 
 import json
+import os
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
 import hashlib
 
+logger = logging.getLogger(__name__)
+
 
 class OutputManager:
     """出力ファイルとメタデータの管理を行うクラス"""
 
-    def __init__(self, output_dir: str = "output"):
+    def __init__(self, output_dir: str = "output", disable_save: bool = False):
         """
         Args:
             output_dir: 出力ディレクトリのパス
+            disable_save: ファイル保存を無効化（デフォルト: False）
         """
         self.output_dir = Path(output_dir)
-        self.output_dir.mkdir(exist_ok=True)
+
+        # ファイル保存無効化の判定
+        # 1. 明示的なdisable_saveパラメータ
+        # 2. DISABLE_FILE_SAVE環境変数
+        # 3. Hugging Face Spaces環境（SPACE_ID環境変数の有無で判定）
+        self.disable_save = (
+            disable_save
+            or os.getenv("DISABLE_FILE_SAVE", "").lower() == "true"
+            or "SPACE_ID" in os.environ
+        )
+
+        if self.disable_save:
+            logger.info("File save disabled (cloud deployment mode detected)")
+        else:
+            self.output_dir.mkdir(exist_ok=True)
+            logger.info(f"Output directory initialized: {self.output_dir}")
 
     def generate_filename(
         self,
@@ -94,7 +115,7 @@ class OutputManager:
         metadata: Dict[str, Any],
         prefix: str = "output",
         extension: str = "png"
-    ) -> tuple[Path, Path]:
+    ) -> Optional[tuple[Path, Path]]:
         """
         画像データとメタデータを保存する
 
@@ -106,7 +127,13 @@ class OutputManager:
 
         Returns:
             (image_path, metadata_path): 保存した画像パスとメタデータパス
+            None: ファイル保存が無効化されている場合
         """
+        # ファイル保存が無効化されている場合はスキップ
+        if self.disable_save:
+            logger.debug("File save skipped (cloud deployment mode)")
+            return None
+
         # ファイル名を生成
         image_path, metadata_path = self.generate_filename(
             prefix=prefix,
@@ -136,7 +163,7 @@ class OutputManager:
         metadata: Dict[str, Any],
         prefix: str = "output",
         extension: str = "png"
-    ) -> tuple[list[Path], Path]:
+    ) -> Optional[tuple[list[Path], Path]]:
         """
         複数の画像データとメタデータを保存する
 
@@ -148,9 +175,15 @@ class OutputManager:
 
         Returns:
             (image_paths, metadata_path): 保存した画像パスのリストとメタデータパス
+            None: ファイル保存が無効化されている場合
         """
         if not image_data_list:
             raise ValueError("image_data_list is empty")
+
+        # ファイル保存が無効化されている場合はスキップ
+        if self.disable_save:
+            logger.debug("File save skipped (cloud deployment mode)")
+            return None
 
         # 単一画像の場合は既存メソッドを使用
         if len(image_data_list) == 1:

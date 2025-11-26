@@ -271,32 +271,39 @@ class ImagenTab(BaseTab):
             # PIL Imageに変換
             pil_images = [Image.open(io.BytesIO(data)) for data in image_data_list]
 
-            # ファイル保存
+            # ファイル保存（HF Spacesでは無効化される可能性あり）
+            image_files = []
+            metadata_path = None
+
             if len(image_data_list) == 1:
-                image_path, metadata_path = self.app.output_manager.save_image_with_metadata(
+                save_result = self.app.output_manager.save_image_with_metadata(
                     image_data=image_data_list[0],
                     metadata=metadata,
                     prefix="imagen_gen"
                 )
-                image_files = [image_path.name]
+                if save_result:
+                    image_path, metadata_path = save_result
+                    image_files = [image_path.name]
             else:
-                image_paths, metadata_path = self.app.output_manager.save_images_with_metadata(
+                save_result = self.app.output_manager.save_images_with_metadata(
                     image_data_list=image_data_list,
                     metadata=metadata,
                     prefix="imagen_gen"
                 )
-                image_files = [p.name for p in image_paths]
+                if save_result:
+                    image_paths, metadata_path = save_result
+                    image_files = [p.name for p in image_paths]
 
             # 情報テキスト生成
             info_text = f"### 生成完了 ✅\n\n"
             info_text += f"**モデル**: {model_name}\n"
             info_text += f"**生成枚数**: {len(pil_images)}枚\n"
 
-            if len(image_files) == 1:
+            if image_files and len(image_files) == 1:
                 info_text += f"**画像ファイル**: `{image_files[0]}`\n"
                 info_text += f"**メタデータ**: `{metadata_path.name}`\n"
                 info_text += f"**ファイルサイズ**: {len(image_data_list[0]) / 1024:.1f} KB\n"
-            else:
+            elif image_files:
                 info_text += f"**画像ファイル**: \n"
                 for img_file in image_files:
                     info_text += f"  - `{img_file}`\n"

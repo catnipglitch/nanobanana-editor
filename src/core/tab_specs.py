@@ -14,6 +14,7 @@ class TabCategory(Enum):
     """タブのカテゴリ"""
     GENERATION = "generation"      # 画像生成系
     EDITING = "editing"            # 画像編集系
+    ANALYSIS = "analysis"          # 画像解析系
     MANAGEMENT = "management"      # 管理・設定系
 
 
@@ -44,44 +45,106 @@ class TabSpec:
 
 
 # タブ定義（表示順序に従って定義）
+# Phase 3.1: 11タブ構成への拡張
+
 TAB_GEMINI = TabSpec(
-    key="gemini",
+    key="gemini_gen01",
     display_name="画像生成（Gemini）",
-    elem_id="tab-gemini",
+    elem_id="tab-gemini-gen01",
     class_name="GeminiTab",
     category=TabCategory.GENERATION,
-    description="Gemini モデルで画像を生成",
+    description="Gemini モデルで画像を生成（Google検索統合済み）",
     order=1
 )
 
-TAB_IMAGEN = TabSpec(
-    key="imagen",
-    display_name="画像生成（Imagen）",
-    elem_id="tab-imagen",
-    class_name="ImagenTab",
-    category=TabCategory.GENERATION,
-    description="Imagen モデルで画像を生成",
+TAB_BASIC_EDIT = TabSpec(
+    key="gemini_edit01",
+    display_name="ベーシック編集",
+    elem_id="tab-gemini-edit01",
+    class_name="BasicEditTab",
+    category=TabCategory.EDITING,
+    description="回転・反転・リサイズなど基本操作",
     order=2
 )
 
 TAB_REFERENCE = TabSpec(
-    key="reference",
+    key="gemini_edit02",
     display_name="参照画像ベース生成",
-    elem_id="tab-reference",
+    elem_id="tab-gemini-edit02",
     class_name="ReferenceTab",
     category=TabCategory.GENERATION,
     description="参照画像を基に新しい画像を生成",
     order=3
 )
 
+TAB_MULTITURN_EDIT = TabSpec(
+    key="gemini_edit03",
+    display_name="マルチターン編集",
+    elem_id="tab-gemini-edit03",
+    class_name="MultiTurnEditTab",
+    category=TabCategory.EDITING,
+    description="対話形式での段階的編集",
+    order=4
+)
+
+TAB_LAYOUT_EDIT = TabSpec(
+    key="gemini_edit04",
+    display_name="レイアウト編集",
+    elem_id="tab-gemini-edit04",
+    class_name="LayoutEditTab",
+    category=TabCategory.EDITING,
+    description="キャラクターシート等の定型レイアウト",
+    order=5
+)
+
+TAB_OUTFIT_CHANGE = TabSpec(
+    key="gemini_edit05",
+    display_name="衣装チェンジ",
+    elem_id="tab-gemini-edit05",
+    class_name="OutfitChangeTab",
+    category=TabCategory.EDITING,
+    description="キャラクター着替え専用",
+    order=6
+)
+
+TAB_ADVANCED_EDIT = TabSpec(
+    key="gemini_edit06",
+    display_name="高度な編集",
+    elem_id="tab-gemini-edit06",
+    class_name="AdvancedEditTab",
+    category=TabCategory.EDITING,
+    description="アルファ処理・マスク編集等",
+    order=7
+)
+
+TAB_ANALYSIS = TabSpec(
+    key="gemini_other01",
+    display_name="画像解析",
+    elem_id="tab-gemini-other01",
+    class_name="AnalysisTab",
+    category=TabCategory.ANALYSIS,
+    description="画像説明生成・ポーズ抽出",
+    order=8
+)
+
 TAB_AGENT = TabSpec(
-    key="agent",
-    display_name="エージェント支援編集",
-    elem_id="tab-agent",
+    key="gemini_other02",
+    display_name="Chat / エージェント",
+    elem_id="tab-gemini-other02",
     class_name="AgentTab",
     category=TabCategory.EDITING,
-    description="AI エージェントによる画像編集",
-    order=4
+    description="対話型エージェントによる画像編集",
+    order=9
+)
+
+TAB_IMAGEN = TabSpec(
+    key="imagen_gen01",
+    display_name="画像生成（Imagen）",
+    elem_id="tab-imagen-gen01",
+    class_name="ImagenTab",
+    category=TabCategory.GENERATION,
+    description="Imagen モデルで画像を生成",
+    order=10
 )
 
 TAB_SETTINGS = TabSpec(
@@ -91,7 +154,7 @@ TAB_SETTINGS = TabSpec(
     class_name="SettingsTab",
     category=TabCategory.MANAGEMENT,
     description="API キー管理とアプリ設定",
-    order=5
+    order=11
 )
 
 
@@ -100,11 +163,25 @@ class TabRegistry:
 
     _tabs: List[TabSpec] = [
         TAB_GEMINI,
-        TAB_IMAGEN,
+        TAB_BASIC_EDIT,
         TAB_REFERENCE,
+        TAB_MULTITURN_EDIT,
+        TAB_LAYOUT_EDIT,
+        TAB_OUTFIT_CHANGE,
+        TAB_ADVANCED_EDIT,
+        TAB_ANALYSIS,
         TAB_AGENT,
+        TAB_IMAGEN,
         TAB_SETTINGS,
     ]
+
+    # Phase 3.1: 旧key → 新key マッピング（後方互換性）
+    _legacy_key_mapping = {
+        "gemini": "gemini_gen01",
+        "imagen": "imagen_gen01",
+        "reference": "gemini_edit02",
+        "agent": "gemini_other02",
+    }
 
     @classmethod
     def get_all_tabs(cls) -> List[TabSpec]:
@@ -113,8 +190,10 @@ class TabRegistry:
 
     @classmethod
     def get_tab_by_key(cls, key: str) -> Optional[TabSpec]:
-        """key からタブ仕様を取得"""
-        return next((t for t in cls._tabs if t.key == key), None)
+        """key からタブ仕様を取得（旧keyも認識）"""
+        # 旧keyの場合は新keyに変換
+        actual_key = cls._legacy_key_mapping.get(key, key)
+        return next((t for t in cls._tabs if t.key == actual_key), None)
 
     @classmethod
     def get_tab_by_elem_id(cls, elem_id: str) -> Optional[TabSpec]:

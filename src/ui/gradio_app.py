@@ -38,11 +38,17 @@ from src.core.output_manager import OutputManager
 from src.core.prompt_templates import PromptTemplateManager
 from src.core.model_specs import GeminiModelRegistry, ImagenModelRegistry
 
-# タブクラスをインポート
+# タブクラスをインポート（Phase 3.1: 11タブ構成）
 from src.ui.tabs import (
     GeminiTab,
+    BasicEditTab,
     ImagenTab,
     ReferenceTab,
+    MultiTurnEditTab,
+    LayoutEditTab,
+    OutfitChangeTab,
+    AdvancedEditTab,
+    AnalysisTab,
     AgentTab,
     SettingsTab
 )
@@ -111,11 +117,17 @@ class NanobananaApp:
         self.default_safety_filter = "block_only_high"
         self.default_person_generation = "allow_all"  # Issue #8: 全年齢可をデフォルトに
 
-        # タブクラスをインスタンス化
+        # タブクラスをインスタンス化（Phase 3.1: 11タブ構成）
         self.gemini_tab = GeminiTab(self)
-        self.imagen_tab = ImagenTab(self)
+        self.basic_edit_tab = BasicEditTab(self)
         self.reference_tab = ReferenceTab(self)
+        self.multiturn_edit_tab = MultiTurnEditTab(self)
+        self.layout_edit_tab = LayoutEditTab(self)
+        self.outfit_change_tab = OutfitChangeTab(self)
+        self.advanced_edit_tab = AdvancedEditTab(self)
+        self.analysis_tab = AnalysisTab(self)
         self.agent_tab = AgentTab(self)
+        self.imagen_tab = ImagenTab(self)
         self.settings_tab = SettingsTab(self)
 
         # 初期タブを読み込み（APIキー未設定時は強制的にSettings）
@@ -176,10 +188,10 @@ class NanobananaApp:
             return ""
 
     def create_ui(self):
-        """Gradio UIを作成（5タブ構成：タブクラス分離版）"""
+        """Gradio UIを作成（11タブ構成：Phase 3.1完了版）"""
         with gr.Blocks(title="nanobanana-editor", theme=gr.themes.Soft()) as demo:
             gr.Markdown("# nanobanana-editor")
-            gr.Markdown("画像生成・編集ツール - Gemini & Imagen 完全分離アーキテクチャ")
+            gr.Markdown("画像生成・編集ツール - Gemini & Imagen 完全分離アーキテクチャ（11タブ構成）")
 
             # APIキー未設定時の警告バナー
             if self.api_key_missing:
@@ -191,11 +203,17 @@ class NanobananaApp:
 
             # デフォルトタブを設定（APIキー未設定時はSettings強制）
             with gr.Tabs(selected=self.default_tab):
-                # 各タブクラスのcreate_ui()を呼び出し
+                # 各タブクラスのcreate_ui()を呼び出し（Phase 3.1: 11タブ）
                 self.gemini_tab.create_ui()
-                self.imagen_tab.create_ui()
+                self.basic_edit_tab.create_ui()
                 self.reference_tab.create_ui()
+                self.multiturn_edit_tab.create_ui()
+                self.layout_edit_tab.create_ui()
+                self.outfit_change_tab.create_ui()
+                self.advanced_edit_tab.create_ui()
+                self.analysis_tab.create_ui()
                 self.agent_tab.create_ui()
+                self.imagen_tab.create_ui()
                 self.settings_tab.create_ui()
 
         return demo
@@ -210,7 +228,7 @@ def main():
     """メイン関数"""
     import argparse
 
-    parser = argparse.ArgumentParser(description="nanobanana-editor Gradio UI (4-Tab Architecture)")
+    parser = argparse.ArgumentParser(description="nanobanana-editor Gradio UI (11-Tab Architecture - Phase 3.1)")
     parser.add_argument("--test", action="store_true", help="テストモード（APIキーなし）")
     parser.add_argument("--share", action="store_true", help="公開リンクを生成")
     parser.add_argument("--server-name", type=str, default="127.0.0.1", help="サーバー名")

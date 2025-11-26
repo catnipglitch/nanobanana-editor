@@ -4,8 +4,9 @@ Reference Tab
 Reference image-based generation tab (Gemini with reference images).
 """
 
-import gradio as gr
 import logging
+
+import gradio as gr
 from PIL import Image
 from .base_tab import BaseTab
 from ...core.generators import GenerationConfig, ModelType
@@ -193,16 +194,16 @@ class ReferenceTab(BaseTab):
             if not image_data_list:
                 return None, "❌ 画像の生成に失敗しました", ""
 
-            # 画像とメタデータを保存
-            image_path, metadata_path = self.app.output_manager.save_image_with_metadata(
+            # 生成した画像をPIL Imageに変換
+            generated_image = Image.open(io.BytesIO(image_data_list[0]))
+
+            # 画像とメタデータを保存（HF Spacesでは無効化される可能性あり）
+            save_result = self.app.output_manager.save_image_with_metadata(
                 image_data=image_data_list[0],
                 metadata=metadata,
                 prefix="edit_gen",
                 extension="jpg",
             )
-
-            # 生成した画像を読み込み
-            generated_image = Image.open(image_path)
 
             # テキスト応答を取得
             text_response = metadata.get("text_response", "")
@@ -215,12 +216,17 @@ class ReferenceTab(BaseTab):
 **アスペクト比**: {aspect_ratio}
 **解像度**: {image_size}
 **参照画像数**: {len(ref_images_list) if ref_images_list else 0}
-**画像ファイル**: `{image_path.name}`
-**メタデータ**: `{metadata_path.name}`
-**サイズ**: {len(image_data_list[0]):,} バイト
 """
+            if save_result:
+                image_path, metadata_path = save_result
+                info_text += f"**画像ファイル**: `{image_path.name}`\n"
+                info_text += f"**メタデータ**: `{metadata_path.name}`\n"
+                logger.info(f"Reference image generation complete: {image_path.name}")
+            else:
+                info_text += f"**画像ファイル**: （保存無効）\n"
+                logger.info("Reference image generation complete (save disabled)")
 
-            logger.info(f"Reference image generation complete: {image_path.name}")
+            info_text += f"**サイズ**: {len(image_data_list[0]):,} バイト\n"
             return generated_image, info_text, text_response
 
         except Exception as e:

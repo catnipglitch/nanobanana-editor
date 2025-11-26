@@ -30,6 +30,7 @@ class GenerationConfig:
     # Gemini固有のパラメータ
     image_size: Optional[str] = None  # Phase 2.6: 解像度選択（1K/2K/4K）
     reference_images: Optional[List[Image.Image]] = None  # Phase 2.6: 参照画像（最大14枚）
+    enable_google_search: bool = False  # Phase 3.0: Google検索ツール有効化
 
     def to_dict(self) -> Dict[str, Any]:
         """設定を辞書形式に変換"""
@@ -50,4 +51,6 @@ class GenerationConfig:
             config_dict["image_size"] = self.image_size
         if self.reference_images is not None:
             config_dict["reference_images_count"] = len(self.reference_images)
+        if self.enable_google_search:
+            config_dict["enable_google_search"] = self.enable_google_search
         return config_dict

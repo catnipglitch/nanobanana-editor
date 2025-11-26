@@ -67,17 +67,24 @@ class GeminiImageGenerator(BaseImageGenerator):
         else:
             contents = config.prompt
 
-        logger.info(f"Gemini API parameters: model={config.model_name}, prompt='{config.prompt[:50]}...', aspect_ratio={config.aspect_ratio}, image_size={config.image_size}, reference_images_count={len(config.reference_images) if config.reference_images else 0}, response_modalities=['TEXT', 'IMAGE']")
+        # Phase 3.0: Google検索ツールの設定
+        gen_config_dict = {
+            "response_modalities": ["TEXT", "IMAGE"],  # Phase 2.6: TEXTも取得
+            "image_config": types.ImageConfig(**image_config_params),
+        }
+
+        if config.enable_google_search:
+            gen_config_dict["tools"] = [{"google_search": {}}]
+            logger.info("Google Search tool enabled")
+
+        logger.info(f"Gemini API parameters: model={config.model_name}, prompt='{config.prompt[:50]}...', aspect_ratio={config.aspect_ratio}, image_size={config.image_size}, reference_images_count={len(config.reference_images) if config.reference_images else 0}, enable_google_search={config.enable_google_search}, response_modalities=['TEXT', 'IMAGE']")
 
         try:
-            # Geminiで画像生成（アスペクト比、解像度、参照画像を指定）
+            # Geminiで画像生成（アスペクト比、解像度、参照画像、Google検索を指定）
             response = client.models.generate_content(
                 model=config.model_name,
                 contents=contents,
-                config=types.GenerateContentConfig(
-                    response_modalities=["TEXT", "IMAGE"],  # Phase 2.6: TEXTも取得
-                    image_config=types.ImageConfig(**image_config_params),
-                ),
+                config=types.GenerateContentConfig(**gen_config_dict),
             )
 
             logger.info(f"Gemini API call successful")
