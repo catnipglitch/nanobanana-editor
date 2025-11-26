@@ -4,7 +4,9 @@ emoji: 🤖
 colorFrom: indigo
 colorTo: blue
 sdk: gradio
+sdk_version: 5.50.0
 app_file: app.py
+python_version: 3.11
 pinned: false
 ---
 
@@ -21,7 +23,7 @@ GeminiとImagenモデルによるAI画像生成ツールです。ブラウザベ
 
 ### 必要要件
 
-- Python 3.13+
+- Python 3.11以上（ローカル開発では3.13推奨、Hugging Face Spacesでは3.11）
 - Google API キー（Gemini Developer API）
 
 ### セットアップ手順
@@ -191,7 +193,7 @@ python generate_image.py "Test prompt" -m test-model
 
 ## 技術スタック
 
-- **Python**: 3.13+
+- **Python**: 3.11以上（ローカル: 3.13推奨、HF Spaces: 3.11）
 - **Google Gen AI SDK for Python**: 統合APIクライアント
 - **Gradio**: WebUIフレームワーク
 - **PIL (Pillow)**: 画像処理
