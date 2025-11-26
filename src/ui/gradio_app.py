@@ -227,11 +227,16 @@ class NanobananaApp:
 def main():
     """メイン関数"""
     import argparse
+    import os
+
+    # Hugging Face Spaces 環境を検出
+    is_spaces = os.getenv("SPACE_ID") is not None
+    default_server_name = "0.0.0.0" if is_spaces else "127.0.0.1"
 
     parser = argparse.ArgumentParser(description="nanobanana-editor Gradio UI (11-Tab Architecture - Phase 3.1)")
     parser.add_argument("--test", action="store_true", help="テストモード（APIキーなし）")
     parser.add_argument("--share", action="store_true", help="公開リンクを生成")
-    parser.add_argument("--server-name", type=str, default="127.0.0.1", help="サーバー名")
+    parser.add_argument("--server-name", type=str, default=default_server_name, help="サーバー名")
     parser.add_argument("--server-port", type=int, default=7860, help="サーバーポート")
 
     args = parser.parse_args()
