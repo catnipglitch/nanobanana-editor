@@ -541,6 +541,7 @@ class BasicEditTab(BaseTab):
         optimized_prompt_from_ui: str,
         aspect_ratio: str,
         resolution: str,
+        enable_google_search: bool = False,
     ) -> tuple[Optional[Image.Image], str, str]:
         """
         シンプルなアップスケール処理（1回のAPI呼び出しのみ）
@@ -553,6 +554,7 @@ class BasicEditTab(BaseTab):
             optimized_prompt_from_ui: UI経由で既に最適化されたプロンプト（空文字列なら新規生成）
             aspect_ratio: アスペクト比
             resolution: 解像度
+            enable_google_search: Google検索を有効化
 
         Returns:
             (output_image, output_info, optimized_prompt)
@@ -597,6 +599,19 @@ class BasicEditTab(BaseTab):
             img_bytes = img_buffer.getvalue()
 
             # 6. Gemini API呼び出し
+            # Google Search対応
+            gen_config_dict = {
+                "response_modalities": ["image"],
+                "image_generation_config": types.ImageGenerationConfig(
+                    aspect_ratio=aspect_ratio,
+                    output_resolution=resolution,
+                ),
+            }
+
+            if enable_google_search:
+                gen_config_dict["tools"] = [{"google_search": {}}]
+                logger.info("Google Search tool enabled")
+
             response = self.app.gemini_generator.generate_content(
                 model=model_name,
                 contents=[
@@ -605,13 +620,7 @@ class BasicEditTab(BaseTab):
                     ),
                     types.Part.from_text(text=final_prompt),
                 ],
-                config=types.GenerateContentConfig(
-                    response_modalities=["image"],
-                    image_generation_config=types.ImageGenerationConfig(
-                        aspect_ratio=aspect_ratio,
-                        output_resolution=resolution,
-                    ),
-                ),
+                config=types.GenerateContentConfig(**gen_config_dict),
             )
 
             # 7. 出力画像を取得
@@ -649,6 +658,7 @@ class BasicEditTab(BaseTab):
 **出力解像度**: {output_w} x {output_h} ({resolution})
 **アスペクト比**: {aspect_ratio}
 {f"**プロンプト最適化**: レベル{optimization_level}" if optimization_level > 0 else ""}
+{"**Google Search**: 有効" if enable_google_search else ""}
 {f"**⚠️ 最適化警告**: {optimized_prompt_info}" if optimized_prompt_info else ""}
 
 **出力ファイル**:
@@ -950,6 +960,14 @@ class BasicEditTab(BaseTab):
                         info="出力画像の解像度",
                     )
 
+                    # ツールオプション
+                    with gr.Accordion("ツールオプション", open=False):
+                        enable_google_search = gr.Checkbox(
+                            label="Google Search",
+                            value=False,
+                            info="Google検索でリアルタイム情報を取得（Gemini 3 Pro Image推奨）"
+                        )
+
                     # ボタン
                     with gr.Row():
                         edit_button = gr.Button("編集開始", variant="primary")
@@ -983,6 +1001,7 @@ class BasicEditTab(BaseTab):
                     optimized_prompt_display,
                     aspect_ratio,
                     resolution,
+                    enable_google_search,
                 ],
                 outputs=[
                     output_img,
@@ -998,6 +1017,7 @@ class BasicEditTab(BaseTab):
                     "",  # optimized_prompt_display
                     "1:1",  # aspect_ratio
                     "1K",  # resolution
+                    False,  # enable_google_search
                     None,  # output_img
                     "",  # output_info
                 ),
@@ -1008,6 +1028,7 @@ class BasicEditTab(BaseTab):
                     optimized_prompt_display,
                     aspect_ratio,
                     resolution,
+                    enable_google_search,
                     output_img,
                     output_info,
                 ],

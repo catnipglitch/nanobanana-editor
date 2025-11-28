@@ -5,11 +5,21 @@ Gemini 3.0を使用したプロンプト最適化サービス
 """
 
 import logging
+from datetime import datetime
 from typing import Optional
 
 from google import genai
 
+try:
+    from zoneinfo import ZoneInfo
+    ZONEINFO_AVAILABLE = True
+except ImportError:
+    ZONEINFO_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
+
+if not ZONEINFO_AVAILABLE:
+    logger.warning("zoneinfo not available, datetime context will use UTC for fallback")
 
 
 class PromptOptimizer:
@@ -27,7 +37,7 @@ class PromptOptimizer:
         self, base_prompt: str, user_instructions: str, level: int
     ) -> tuple[str, Optional[str]]:
         """
-        プロンプトを最適化する
+        プロンプトを最適化する（日時コンテキスト対応）
 
         Args:
             base_prompt: 処理タイプから選択された基本プロンプト
@@ -37,16 +47,23 @@ class PromptOptimizer:
         Returns:
             (最適化後のプロンプト, エラーメッセージ or None)
         """
+        # 時間参照を検出
+        has_temporal_ref = self._detect_temporal_references(base_prompt, user_instructions)
+
         # レベル0: 整合性チェックのみ
         if level == 0:
-            return self._level_0_consistency_check(base_prompt, user_instructions)
+            prompt, error = self._level_0_consistency_check(base_prompt, user_instructions)
+            # 日時コンテキストを追加
+            datetime_str = self._generate_datetime_context()
+            final_prompt = self._append_datetime_to_prompt(prompt, datetime_str)
+            return final_prompt, error
 
         # レベル1,2: Gemini 3.0で最適化
         try:
             client = genai.Client(api_key=self.api_key, vertexai=False)
 
-            # システムプロンプト選択
-            system_prompt = OPTIMIZATION_SYSTEM_PROMPTS.get(level, OPTIMIZATION_SYSTEM_PROMPTS[1])
+            # システムプロンプト選択（時間参照フラグを渡す）
+            system_prompt = self._get_system_prompt(level, has_temporal_ref)
 
             # 最適化リクエスト（XMLコンテキスト構造）
             prompt = f"""
@@ -90,17 +107,27 @@ Based on the context above, generate the optimized prompt.
 
             if not optimized_prompt:
                 logger.warning("Gemini 3.0 returned no text response for prompt optimization")
-                return self._level_0_consistency_check(base_prompt, user_instructions)
+                fallback_prompt, _ = self._level_0_consistency_check(base_prompt, user_instructions)
+                # 日時コンテキストを追加
+                datetime_str = self._generate_datetime_context()
+                final_prompt = self._append_datetime_to_prompt(fallback_prompt, datetime_str)
+                return final_prompt, None
 
-            logger.info(f"Prompt optimized (level {level}): {len(optimized_prompt)} chars")
-            return optimized_prompt, None
+            # 日時コンテキストを追加
+            datetime_str = self._generate_datetime_context()
+            final_prompt = self._append_datetime_to_prompt(optimized_prompt, datetime_str)
+
+            logger.info(f"Prompt optimized (level {level}, temporal_ref={has_temporal_ref}): {len(final_prompt)} chars")
+            return final_prompt, None
 
         except Exception as e:
             logger.error(f"Prompt optimization failed (level {level}): {e}", exc_info=True)
             error_msg = f"プロンプト最適化エラー: {str(e)}"
-            # フォールバック: レベル0
+            # フォールバック: レベル0 + 日時追加
             fallback_prompt, _ = self._level_0_consistency_check(base_prompt, user_instructions)
-            return fallback_prompt, error_msg
+            datetime_str = self._generate_datetime_context()
+            final_prompt = self._append_datetime_to_prompt(fallback_prompt, datetime_str)
+            return final_prompt, error_msg
 
     def _level_0_consistency_check(
         self, base_prompt: str, user_instructions: str
@@ -125,6 +152,132 @@ Based on the context above, generate the optimized prompt.
 
         logger.info(f"Prompt combined (level 0): {len(combined)} chars")
         return combined, None
+
+    def _generate_datetime_context(self) -> str:
+        """現在の日時情報を生成する（ローカルタイムゾーン）
+
+        システムのローカルタイムゾーンを使用。
+        取得できない場合はJST（Asia/Tokyo）にフォールバック。
+
+        Returns:
+            str: フォーマット例: "2025-11-28 Fri 14:30"
+        """
+        try:
+            # まずシステムのローカルタイムゾーンで取得を試みる
+            now = datetime.now()
+            datetime_str = now.strftime("%Y-%m-%d %a %H:%M")
+            logger.debug(f"Generated datetime context (local): {datetime_str}")
+            return datetime_str
+
+        except Exception as e:
+            # ローカルタイムゾーン取得失敗時、JSTにフォールバック
+            logger.warning(f"Failed to get local datetime, falling back to JST: {e}")
+            try:
+                if ZONEINFO_AVAILABLE:
+                    jst = ZoneInfo("Asia/Tokyo")
+                    now = datetime.now(jst)
+                    datetime_str = now.strftime("%Y-%m-%d %a %H:%M")
+                    logger.debug(f"Generated datetime context (JST fallback): {datetime_str}")
+                    return datetime_str
+                else:
+                    # zoneinfo利用不可の場合、UTCを使用
+                    now = datetime.utcnow()
+                    datetime_str = now.strftime("%Y-%m-%d %a %H:%M UTC")
+                    logger.warning("zoneinfo not available, using UTC")
+                    return datetime_str
+            except Exception as e2:
+                # 最終フォールバック: UTC
+                logger.error(f"All datetime context generation failed: {e2}")
+                now = datetime.utcnow()
+                return now.strftime("%Y-%m-%d %a %H:%M UTC")
+
+    def _detect_temporal_references(
+        self, base_prompt: str, user_instructions: str
+    ) -> bool:
+        """プロンプト内の時間参照を検出する
+
+        Args:
+            base_prompt: 基本プロンプト
+            user_instructions: ユーザーの追加指示
+
+        Returns:
+            bool: 時間参照が検出された場合True
+        """
+        temporal_keywords = [
+            # 日本語
+            "明日", "今日", "昨日", "今夜", "今朝", "今晩",
+            "午前", "午後", "朝", "昼", "夕方", "夜",
+            "来週", "今週", "先週", "来月", "今月", "先月",
+            "来年", "今年", "去年",
+            # 英語
+            "tomorrow", "today", "yesterday", "tonight",
+            "morning", "afternoon", "evening", "night",
+            "next week", "this week", "last week",
+            "next month", "this month", "last month",
+            "next year", "this year", "last year",
+        ]
+
+        combined_text = f"{base_prompt} {user_instructions}".lower()
+
+        for keyword in temporal_keywords:
+            if keyword.lower() in combined_text:
+                logger.info(f"Temporal reference detected: '{keyword}'")
+                return True
+
+        return False
+
+    def _append_datetime_to_prompt(self, prompt: str, datetime_str: str) -> str:
+        """プロンプト末尾に日時情報を追加する
+
+        Args:
+            prompt: 元のプロンプト
+            datetime_str: 日時文字列
+
+        Returns:
+            str: 日時情報が追加されたプロンプト
+        """
+        # 重複チェック: 既に "Current datetime:" が含まれている場合はスキップ
+        if "Current datetime:" in prompt:
+            logger.debug("Datetime info already present in prompt, skipping append")
+            return prompt
+
+        # 末尾に日時情報を追加
+        final_prompt = f"{prompt}\n\nCurrent datetime: {datetime_str}"
+        logger.debug(f"Appended datetime to prompt: {datetime_str}")
+
+        return final_prompt
+
+    def _get_system_prompt(self, level: int, has_temporal_ref: bool) -> str:
+        """システムプロンプトを取得する
+
+        Args:
+            level: 最適化レベル（0/1/2）
+            has_temporal_ref: 時間参照が含まれている場合True
+
+        Returns:
+            str: システムプロンプト
+        """
+        base_prompt = OPTIMIZATION_SYSTEM_PROMPTS.get(level, OPTIMIZATION_SYSTEM_PROMPTS[1])
+
+        # 時間参照がない場合は、既存のシステムプロンプトをそのまま返す
+        if not has_temporal_ref:
+            return base_prompt
+
+        # 時間参照がある場合、temporal_context_noteを挿入
+        temporal_note = """
+<temporal_context_note>
+The user's prompt contains temporal references (e.g., "tomorrow", "next week").
+A current datetime will be appended to the final prompt as: "Current datetime: YYYY-MM-DD DDD HH:MM"
+Please ensure the optimized prompt can reference this datetime information appropriately.
+</temporal_context_note>
+"""
+
+        # </output_format>の直前に挿入
+        if "</output_format>" in base_prompt:
+            return base_prompt.replace("</output_format>", f"{temporal_note}\n</output_format>")
+        else:
+            # フォールバック: 末尾に追加
+            return f"{base_prompt}\n\n{temporal_note}"
 
 
 # =============================================================================

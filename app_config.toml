@@ -13,48 +13,277 @@ default_tab = "gemini"
 # Note: modelフィールドは削除されました（Phase 2.5: Gemini/Imagen完全分離）
 [[templates]]
 name = "人物-ファストファッション男性-全身"
-prompt = "Full-body portrait of a male model for modern fast fashion, natural pose, clean background, realistic photography, neutral styling, random skin tone and hair color but not eccentric, high detail, contemporary casual outfit"
+prompt = """
+Generate a high-quality full-body portrait suitable for a modern fast fashion lookbook.
+**Subject:** A male model with a natural pose and neutral styling. Skin tone and hair color should be random but natural (non-eccentric).
+**Outfit:** Contemporary casual fashion, clean and stylish.
+**Style:** Realistic commercial photography, high detail, sharp focus.
+**Background:** Clean, solid color or simple studio background to keep focus on the outfit.
+**Constraints:** High-quality asset for production. No text, no logos, no watermarks. No text on clothing or accessories.
+"""
+# (和訳)
+# 現代的なファストファッションのルックブックに適した、高品質な全身ポートレートを生成してください。
+# **被写体:** 自然なポーズとニュートラルなスタイリングの男性モデル。肌の色と髪の色はランダムだが自然なもの（奇抜ではないもの）。
+# **衣装:** 現代的なカジュアルファッション。清潔感がありスタイリッシュなもの。
+# **スタイル:** リアルな商用写真、高精細、シャープなピント。
+# **背景:** 衣装に焦点が合うよう、清潔な単色またはシンプルなスタジオ背景。
+# **制約:** 制作向けの高品質素材。テキスト、ロゴ、透かしは禁止。衣装やアクセサリーへの文字入れも禁止。
 
 [[templates]]
 name = "人物-ファストファッション女性-全身"
-prompt = "Full-body portrait of a female model for modern fast fashion, natural pose, clean background, realistic photography, neutral styling, random skin tone and hair color but not eccentric, high detail, contemporary casual outfit"
+prompt = """
+Generate a high-quality full-body portrait suitable for a modern fast fashion lookbook.
+**Subject:** A female model with a natural pose and neutral styling. Skin tone and hair color should be random but natural (non-eccentric).
+**Outfit:** Contemporary casual fashion, clean and stylish.
+**Style:** Realistic commercial photography, high detail, sharp focus.
+**Background:** Clean, solid color or simple studio background to keep focus on the outfit.
+**Constraints:** High-quality asset for production. No text, no logos, no watermarks. No text on clothing or accessories.
+"""
+# (和訳)
+# 現代的なファストファッションのルックブックに適した、高品質な全身ポートレートを生成してください。
+# **被写体:** 自然なポーズとニュートラルなスタイリングの女性モデル。肌の色と髪の色はランダムだが自然なもの（奇抜ではないもの）。
+# **衣装:** 現代的なカジュアルファッション。清潔感がありスタイリッシュなもの。
+# **スタイル:** リアルな商用写真、高精細、シャープなピント。
+# **背景:** 衣装に焦点が合うよう、清潔な単色またはシンプルなスタジオ背景。
+# **制約:** 制作向けの高品質素材。テキスト、ロゴ、透かしは禁止。衣装やアクセサリーへの文字入れも禁止。
 
 [[templates]]
 name = "人物-モダン雑誌男性-全身"
-prompt = "Full-body portrait of a male model for modern magazine cover, striking pose, expressive posture, stylish props such as chair or stool, high-end editorial look, realistic photography, random but natural skin tone and hair color"
+prompt = """
+Create a striking full-body portrait for a high-end modern magazine cover.
+**Subject:** A male model showing an expressive, confident posture.
+**Props:** Utilize stylish furniture like a modern chair or stool to enhance the pose.
+**Style:** High-end editorial fashion photography, dramatic but realistic lighting.
+**Appearance:** Natural skin tone and hair color.
+**Constraints:** High-quality asset for production. No text, no logos, no watermarks. No text on clothing or accessories.
+"""
+# (和訳)
+# ハイエンドなモダン雑誌の表紙に向けた、印象的な全身ポートレートを作成してください。
+# **被写体:** 表情豊かで自信に満ちた姿勢の男性モデル。
+# **小道具:** ポーズを引き立てるため、モダンな椅子やスツールなどのスタイリッシュな家具を使用。
+# **スタイル:** ハイエンドなエディトリアルファッション写真。ドラマチックかつリアルなライティング。
+# **外見:** 自然な肌の色と髪の色。
+# **制約:** 制作向けの高品質素材。テキスト、ロゴ、透かしは禁止。衣装やアクセサリーへの文字入れも禁止。
 
 [[templates]]
 name = "人物-モダン雑誌女性-全身"
-prompt = "Full-body portrait of a female model for modern magazine cover, striking pose, expressive posture, stylish props such as chair or stool, high-end editorial look, realistic photography, random but natural skin tone and hair color"
+prompt = """
+Create a striking full-body portrait for a high-end modern magazine cover.
+**Subject:** A female model showing an expressive, confident posture.
+**Props:** Utilize stylish furniture like a modern chair or stool to enhance the pose.
+**Style:** High-end editorial fashion photography, dramatic but realistic lighting.
+**Appearance:** Natural skin tone and hair color.
+**Constraints:** High-quality asset for production. No text, no logos, no watermarks. No text on clothing or accessories.
+"""
+# (和訳)
+# ハイエンドなモダン雑誌の表紙に向けた、印象的な全身ポートレートを作成してください。
+# **被写体:** 表情豊かで自信に満ちた姿勢の女性モデル。
+# **小道具:** ポーズを引き立てるため、モダンな椅子やスツールなどのスタイリッシュな家具を使用。
+# **スタイル:** ハイエンドなエディトリアルファッション写真。ドラマチックかつリアルなライティング。
+# **外見:** 自然な肌の色と髪の色。
+# **制約:** 制作向けの高品質素材。テキスト、ロゴ、透かしは禁止。衣装やアクセサリーへの文字入れも禁止。
 
 [[templates]]
 name = "アニメ-高校生男子-設定資料"
-prompt = "Full-body character reference illustration of a Japanese high school boy, anime style, clean turnaround-friendly pose, simple shading, random hairstyle and hair color, school uniform, clear lineart"
+prompt = """
+Generate a full-body character reference sheet (settei) for a Japanese high school boy.
+**Subject:** Male student in a standard school uniform. Random hairstyle and hair color.
+**Pose:** Clean, standing front view (turnaround-friendly) suitable for 3D modeling or animation reference.
+**Style:** Standard Japanese anime style, clear lineart, simple cel-shading.
+**Background:** Plain white.
+**Constraints:** High-quality asset for production. No text, no logos, no watermarks. No text on clothing or accessories.
+"""
+# (和訳)
+# 日本の男子高校生の全身キャラクター設定資料（設定画）を生成してください。
+# **被写体:** 標準的な制服を着た男子生徒。髪型と髪色はランダム。
+# **ポーズ:** 3Dモデリングやアニメーションの参考資料に適した、清潔感のある正面立ち絵（ターンアラウンド対応）。
+# **スタイル:** 標準的な日本のアニメスタイル、明確な線画、シンプルなセルシェーディング。
+# **背景:** 無地の白。
+# **制約:** 制作向けの高品質素材。テキスト、ロゴ、透かしは禁止。衣装やアクセサリーへの文字入れも禁止。
 
 [[templates]]
 name = "アニメ-高校生女子-設定資料"
-prompt = "Full-body character reference illustration of a Japanese high school girl, anime style, clean turnaround-friendly pose, simple shading, random hairstyle and hair color, school uniform, clear lineart"
+prompt = """
+Generate a full-body character reference sheet (settei) for a Japanese high school girl.
+**Subject:** Female student in a standard school uniform. Random hairstyle and hair color.
+**Pose:** Clean, standing front view (turnaround-friendly) suitable for 3D modeling or animation reference.
+**Style:** Standard Japanese anime style, clear lineart, simple cel-shading.
+**Background:** Plain white.
+**Constraints:** High-quality asset for production. No text, no logos, no watermarks. No text on clothing or accessories.
+"""
+# (和訳)
+# 日本の女子高校生の全身キャラクター設定資料（設定画）を生成してください。
+# **被写体:** 標準的な制服を着た女子生徒。髪型と髪色はランダム。
+# **ポーズ:** 3Dモデリングやアニメーションの参考資料に適した、清潔感のある正面立ち絵（ターンアラウンド対応）。
+# **スタイル:** 標準的な日本のアニメスタイル、明確な線画、シンプルなセルシェーディング。
+# **背景:** 無地の白。
+# **制約:** 制作向けの高品質素材。テキスト、ロゴ、透かしは禁止。衣装やアクセサリーへの文字入れも禁止。
 
 [[templates]]
 name = "ゲーム-異世界転生-男性-設定資料"
-prompt = "Full-body character reference illustration of a male character from an isekai fantasy world, toon-shaded anime style, casual fantasy outfit, no weapons or items in hands, random skin tone and hair color, clean design"
+prompt = """
+Create a character design for a male protagonist in an "Isekai" (fantasy world) RPG.
+**Subject:** A male adventurer in a casual fantasy outfit. No weapons in hand. Clean and distinct design.
+**Style:** Modern anime/game art style with toon shading.
+**Appearance:** Random skin tone and hair color.
+**Context:** Character reference sheet, full-body front view.
+**Constraints:** High-quality asset for production. No text, no logos, no watermarks. No text on clothing or accessories.
+"""
+# (和訳)
+# 「異世界転生」RPGの男性主人公のキャラクターデザインを作成してください。
+# **被写体:** カジュアルなファンタジー衣装を着た男性冒険者。武器は持たせない。清潔で際立ったデザイン。
+# **スタイル:** トゥーンシェーディングを用いた現代的なアニメ/ゲームアートスタイル。
+# **外見:** ランダムな肌の色と髪の色。
+# **コンテキスト:** キャラクター設定資料、全身正面図。
+# **制約:** 制作向けの高品質素材。テキスト、ロゴ、透かしは禁止。衣装やアクセサリーへの文字入れも禁止。
 
 [[templates]]
 name = "ゲーム-異世界転生-女性-設定資料"
-prompt = "Full-body character reference illustration of a female character from an isekai fantasy world, toon-shaded anime style, casual fantasy outfit, no weapons or items in hands, random skin tone and hair color, clean design"
+prompt = """
+Create a character design for a female protagonist in an "Isekai" (fantasy world) RPG.
+**Subject:** A female adventurer in a casual fantasy outfit. No weapons in hand. Clean and distinct design.
+**Style:** Modern anime/game art style with toon shading.
+**Appearance:** Random skin tone and hair color.
+**Context:** Character reference sheet, full-body front view.
+**Constraints:** High-quality asset for production. No text, no logos, no watermarks. No text on clothing or accessories.
+"""
+# (和訳)
+# 「異世界転生」RPGの女性主人公のキャラクターデザインを作成してください。
+# **被写体:** カジュアルなファンタジー衣装を着た女性冒険者。武器は持たせない。清潔で際立ったデザイン。
+# **スタイル:** トゥーンシェーディングを用いた現代的なアニメ/ゲームアートスタイル。
+# **外見:** ランダムな肌の色と髪の色。
+# **コンテキスト:** キャラクター設定資料、全身正面図。
+# **制約:** 制作向けの高品質素材。テキスト、ロゴ、透かしは禁止。衣装やアクセサリーへの文字入れも禁止。
 
 [[templates]]
 name = "スマホゲーム-メカ女性キャラ-設定資料"
-prompt = "Full-body character reference illustration of a mechanical female character for a Japanese mobile game, stylish and visually appealing design, lightly sexy but low exposure, mechanical parts integrated into the silhouette, polished illustration style"
+prompt = """
+Design a character for a Japanese mobile sci-fi game (Gacha game style).
+**Subject:** A female character integrating mechanical parts into her silhouette (Mecha-girl).
+**Design:** Stylish, visually appealing, slightly alluring but maintaining a cool aesthetic.
+**Style:** High-quality, polished game illustration (2D or 2.5D style).
+**Pose:** Full-body, showing off the mechanical details.
+**Constraints:** High-quality asset for production. No text, no logos, no watermarks. No text on clothing or accessories.
+"""
+# (和訳)
+# 日本のモバイルSFゲーム（ガチャゲーム風）のキャラクターをデザインしてください。
+# **被写体:** シルエットに機械部品が統合された女性キャラクター（メカ少女）。
+# **デザイン:** スタイリッシュで視覚的に魅力的。少し色気がありつつもクールな美学を保つ。
+# **スタイル:** 高品質で洗練されたゲームイラスト（2Dまたは2.5Dスタイル）。
+# **ポーズ:** 全身、メカニカルなディテールを見せるポーズ。
+# **制約:** 制作向けの高品質素材。テキスト、ロゴ、透かしは禁止。衣装やアクセサリーへの文字入れも禁止。
+
 
 [[templates]]
-name = "アニメ-女子高生アイドル-立ち絵-統一スタイル"
+name = "天気予報-渋谷-生中継"
 prompt = """
-Full-body character reference illustration of a Japanese high-school idol girl.
-Front-facing, natural relaxed standing pose, neutral expression, clean character-setting style.
-Consistent school uniform: white short-sleeve blouse, navy ribbon tie, pleated navy skirt, navy knee socks, black loafers.
-Uniform must always match this design.
-Hair style and hair color are fully random.
-Art style: modern Japanese anime with clean lineart, soft cell shading, balanced colors, similar to contemporary high-quality TV anime character sheets.
-Background plain white, no props, designed for character material production.
+# Prerequisite
+Location: Shibuya Scramble Crossing, Tokyo
+
+# Instructions
+Generate an image of a live TV weather forecast broadcast from the location specified above.
+Use Google Search to reflect real-world, latest information.
+
+## STEP 1: Google Search (Data Acquisition)
+Search for the following information about the specified location:
+1. 3-day weather forecast (Date, Day, Weather, High/Low Temp).
+2. Current weather and suitable outfit advice.
+3. Current local time.
+
+## STEP 2: Variable Definition
+Define the following variables based on search results:
+- {CURRENT_TIME}: Current local time (e.g., 14:35).
+- {CURRENT_WEATHER}: Current weather, sky brightness, and lighting conditions.
+- {OUTFIT_STYLE}: Modern, clean weather caster outfit suitable for the temperature/weather.
+- {FORECAST_DATA}: Forecast for the next 3 days.
+
+## STEP 3: Image Generation
+Generate an image with the following requirements:
+
+### 1. Theme & Composition
+- **Theme:** Live Weather Broadcast.
+- **Composition:** Weather caster reporting from the site. Bust-up to waist-up angle. Immersive "being there" feel.
+- **UI Overlay:**
+  - Top Left: Time "{CURRENT_TIME}" and logo "NHTV" (White text, drop shadow, sans-serif).
+  - Top Right: Red "LIVE" icon and "東京・渋谷" (White text, Japanese text).
+
+### 2. Main Character
+- **Character:** Cute anime-style weather reporter (Live2D/Vtuber style).
+- **Acting:** Professional demeanor, facing the camera (viewers), holding a weather panel naturally with both hands, speaking kindly to the audience.
+- **Outfit:** {OUTFIT_STYLE} (Trendy and seasonal).
+
+### 3. Item: Weather Panel
+- **Item:** A handheld panel with organized weather info. **Strictly use Japanese text.**
+- **Content:** 3 slots side-by-side. Format: Date (Day in Japanese, e.g., 月) | Weather Icon | High/Low Temp.
+- **Font:** Bold, high visibility, Japanese font (e.g., Noto Sans JP).
+- **Note:** Avoid text like "Tomorrow". Use specific dates.
+  **Add EXACTLY ONE hand-written style advice in Japanese at the bottom based on the search result.**
+  Select the most appropriate one from examples like:
+  - Rain: "傘が必要です" (Need umbrella)
+  - Sunny: "洗濯日和です" (Good for laundry)
+  - Hot: "熱中症に注意" (Heatstroke warning)
+  - Cold: "暖かくしてね" (Stay warm)
+  - Windy: "強風に注意" (Strong wind warning)
+
+### 4. Background
+- **Location:** Shibuya Scramble Crossing scenery.
+- **Crowd:** Pedestrians exist but are placed in the background/mid-ground to keep the caster's immediate area clear.
+- **DOF:** Deep bokeh effect on the background city and crowd. Sharp focus on the caster.
+- **Lighting:** Realistic PBR lighting reflecting {CURRENT_WEATHER} and {CURRENT_TIME}. Character lighting matches the environment.
+**Constraints:** High-quality asset. No text on clothing.
 """
+# (和訳)
+# # 前提条件
+# 地域・場所: 東京 渋谷スクランブル交差点
+#
+# # 指示
+# 上記「前提条件」で指定された場所にて、テレビの天気予報番組が生中継を行っている画像を生成してください。
+# Google検索を使用し、実在の最新情報を反映させること。
+#
+# ## STEP 1: Google検索 (データ取得)
+# 指定された場所について以下の検索を行い、情報を取得してください。
+# 1. 向こう3日間の天気予報 (日付、曜日、天気、最高/最低気温)
+# 2. 現在の天気と適した服装
+# 3. 現在時刻 (現地時間)
+#
+# ## STEP 2: 変数定義
+# 検索結果に基づき、以下の要素を確定させてください。
+# - {CURRENT_TIME}: 画像生成時点の時刻 (例: 14:35)。
+# - {CURRENT_WEATHER}: 現在の現地の天候、空の明るさ、ライティング。
+# - {OUTFIT_STYLE}: 気温と天気に適した、清潔感のあるキャスター風のモダンな服装。
+# - {FORECAST_DATA}: 明日から3日間の天気情報。
+#
+# ## STEP 3: 画像生成
+# 以下の要件で画像を描画してください。
+#
+# ### 1. テーマと構図
+# - **テーマ:** 天気予報番組の生中継
+# - **構図:** 現地からレポートするお天気キャスター。バストアップからウェストアップのアングル。臨場感のあるバランス。
+# - **UIオーバーレイ:**
+#   - 左上: 時刻 {CURRENT_TIME} と番組ロゴ "NHTV" (白文字、ドロップシャドウ、サンセリフ体)
+#   - 右上: 赤い "LIVE" アイコン と "東京・渋谷" (白文字、日本語表記)
+#
+# ### 2. メインキャラクター
+# - **キャラクター:** アニメ調のかわいいお天気お姉さん（Live2D/Vtuberスタイル）
+# - **演技:** カメラ（視聴者）に向かってプロらしく、天気予報説明パネルを丁寧に両手で自然に持ち、親しみやすく語りかけている。
+# - **服装:** {OUTFIT_STYLE} (季節感とトレンドを意識)
+#
+# ### 3. アイテム：天気予報パネル
+# - **アイテム:** 情報が整理された天気予報パネル。**必ず日本語を使用すること。**
+# - **内容:** 横並びの3つの枠。日付(曜日: 月,火など) | 天気アイコン | 最高/最低気温 の形式。
+# - **フォント:** 太字で視認性を高く。日本語フォント。
+# - **注記:** "明日"などの文字は避け、具体的な日付を使う。
+#   **検索結果に基づき、日本語の手書き風ワンポイントアドバイスを「1つだけ」下部に追加すること。**
+#   例:
+#   - 雨: "傘が必要です"
+#   - 晴れ: "洗濯日和です"
+#   - 暑い: "熱中症に注意"
+#   - 寒い: "暖かくしてね"
+#   - 強風: "強風に注意"
+#
+# ### 4. 背景
+# - **場所:** 渋谷スクランブル交差点の風景。
+# - **群衆:** 通行人は存在するが、遠景や中景に配置し、キャスターの周囲は空ける。
+# - **被写界深度:** 背景の街並みと通行人は深くぼかす（ボケ味）。キャスターのみにピント。
+# - **ライティング:** {CURRENT_WEATHER} と {CURRENT_TIME} を反映したリアルな環境光。キャラクターにも適用。
+# **制約:** 高品質な素材。服への文字入れ禁止。
